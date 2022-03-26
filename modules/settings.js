@@ -3,7 +3,19 @@ const Enmap = require("enmap");
 // essentially saves a collection to disk. This is great for per-server configs,
 // and makes things extremely easy for this purpose.
 module.exports = {
-  settings: new Enmap({
-    name: "settings",
-  }),
+    commandUtils: new Enmap({
+        name: "commandUtils",
+    }),
+    loveFactor: new Enmap({
+        name: "loveFactor",
+    }),
+    pingResponses: new Enmap({
+        name: "pingResponses",
+    }),
+    pingCounter: new Enmap({
+        name: "pingCounter",
+    }),
+    settings: new Enmap({
+        name: "settings",
+    }),
 };

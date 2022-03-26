@@ -1,0 +1,12 @@
+{
+  "name": "riz_module",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {},
+  "dependencies": {},
+  "devDependencies": {},
+  "description": "A wasteland of random crap I need on the spot, and maybe other things.",
+  "author": "",
+  "license": "ISC",
+  "keywords": []
+}

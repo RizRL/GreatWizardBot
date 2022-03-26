@@ -1,0 +1,12 @@
+{
+  "name": "manager_module",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {},
+  "dependencies": {},
+  "devDependencies": {},
+  "description": "Tools to manage automatic deletion of messages, and addition / removal of roles in Discord.",
+  "author": "",
+  "license": "ISC",
+  "keywords": []
+}
