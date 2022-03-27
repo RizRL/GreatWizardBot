@@ -1,5 +1,12 @@
+// eslint-disable-next-line no-unused-vars
+const Discord = require("discord.js");
+
 const { loveFactor } = require("../settings.js");
 
+/**
+ * @param {Discord.Client} client
+ * @param {Discord.Message} msg
+ * */
 module.exports = async (client, msg) => {
     const thisLove = loveFactor.ensure(msg.author.id, 0);
     let yes = 0;

@@ -20,9 +20,6 @@ const client = new Client({
     partials 
 });
 
-// Attach the logger to the client, for easy future access
-client.logger = logger;
-
 // Aliases, commands and slash commands are put in collections where they can be
 // read from, catalogued, listed, etc.
 const commands = new Collection();

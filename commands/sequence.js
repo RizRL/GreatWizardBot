@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 const Discord = require("discord.js");
 
-const lair = require("../modules/lair");
+const sequence = require("../modules/sequence.js");
 
 /**
  * @param {Discord.Client} client
@@ -16,11 +16,11 @@ exports.run = async (client, message, [action, ...args], level) => {
 
     switch (action.toLowerCase()) {
         case "add":
-            lair.Sequence.Add(client, message, args);
+            sequence.add(client, message, args);
             break;
 
         case "remove":
-            lair.Sequence.Remove(client, message, args);
+            sequence.remove(client, message, args);
             break;
 
         default:

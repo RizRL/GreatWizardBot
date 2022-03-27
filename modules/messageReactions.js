@@ -8,7 +8,7 @@ module.exports = (msg) => {
     ];
     
     (async () => {
-        // Always check for bamboo
+        // Always check for explosion
         if (isExplosion) {
             msg.react(...messageUtils.getEmojis(msg.guild, ["youWHAT"]))
                 .then(r => {

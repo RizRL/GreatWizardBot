@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 const Discord = require("discord.js");
 
-const lair = require("../modules/lair");
+const ebr = require("../modules/emojibattleroyale.js");
 
 /**
  * @param {Discord.Client} client
@@ -16,11 +16,11 @@ exports.run = async (client, message, [action, ...args], level) => {
 
     switch (action.toLowerCase()) {
         case "add":
-            lair.EmojiBattleRoyale.Add(client, message, args);
+            ebr.add(client, message, args);
             break;
 
         case "remove":
-            lair.EmojiBattleRoyale.Remove(client, message, args);
+            ebr.remove(client, message, args);
             break;
 
         default:

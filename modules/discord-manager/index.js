@@ -1,4 +1,6 @@
-﻿const messageManager = require("./scripts/messagemanager.js");
+﻿const logger = require("../logger.js");
+
+const messageManager = require("./scripts/messagemanager.js");
 const roleManager = require("./scripts/rolemanager.js");
 
 /**
@@ -11,7 +13,7 @@ exports.init = async (client) => {
         roleManager.init(client)
     ]);
 
-    client.logger.log(["Manager Module initialized.", mes, role].join("\n"));
+    logger.log(["Manager Module initialized.", mes, role].join("\n"));
 };
 
 /**

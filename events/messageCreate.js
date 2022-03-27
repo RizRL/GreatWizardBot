@@ -2,7 +2,9 @@ const logger = require("../modules/logger.js");
 const { getSettings, permlevel } = require("../modules/functions.js");
 const config = require("../config.js");
 
-const lair = require("../modules/lair");
+const ebr = require("../modules/emojibattleroyale.js");
+const sequence = require("../modules/sequence.js");
+
 const messageUtils = require("../modules/messageUtils.js");
 const messageReactions = require("../modules/messageReactions.js");
 
@@ -19,8 +21,9 @@ module.exports = async (client, message) => {
         return;
     }
 
-    // lair check
-    lair.message(client, message);
+    // games checks
+    ebr.check(client, message);
+    sequence.check(client, message);
 
     // We add some reactions to some messages in some cases
     messageReactions(message);

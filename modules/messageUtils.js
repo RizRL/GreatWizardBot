@@ -1,4 +1,5 @@
 const { Util } = require("discord.js");
+const logger = require("../modules/logger.js");
 const { pingCounter, pingResponses } = require("./settings.js");
 
 const mentionRegex = /<(a)?:?((\w{2,32})|(@|#|&|!)*)?:?(\d{17,19})>/g;
@@ -41,7 +42,7 @@ async function respondToPings(client, msg) {
     pingCounter.ensure(msg.author.id, 0);
     pingCounter.inc(msg.author.id);
 
-    // If there's no intent, do something random instead.
+    // do something random
     const randomResponse = pingResponses.random();
     const key = pingResponses.findKey((e) => e == randomResponse);
 
@@ -53,7 +54,7 @@ async function respondToPings(client, msg) {
     try {
         func = require(`./pingResponseFuncs/f${key}.js`);
     } catch (e) {
-        client.logger.warn(e);
+        logger.warn(e);
     }
     const finalResponse = func
         ? await func(client, msg)
