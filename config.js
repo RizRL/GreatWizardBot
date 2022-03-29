@@ -45,8 +45,12 @@ const config = {
     "defaultSettings" : {
         "prefix": "!",
         "modLogChannel": "logs",
-        "modRole": "swordie",
-        "adminRole": "wiz biz",
+        "modRole": "Moderator",
+        "adminRole": "Administrator",
+        "ttvSubRole": "Twitch Subscriber",
+        "ttvSubRoleTier1": "Twitch Subscriber: Tier 1",
+        "ttvSubRoleTier2": "Twitch Subscriber: Tier 2",
+        "ttvSubRoleTier3": "Twitch Subscriber: Tier 3",
         "systemNotice": "false", // This gives a notice when a user tries to run a command that they do not have permission to use.
         "commandReply": "false", // Toggle this if you want the bot to ping the command executor or not.
         "welcomeChannel": "welcome",
@@ -78,7 +82,7 @@ const config = {
              */
             check: (message) => { 
                 try {
-                    const subRole = message.guild.roles.cache.find(r => r.id === roleIds.sub);
+                    const subRole = message.guild.roles.cache.find(r => r.name.toLowerCase() === message.settings.ttvSubRole.toLowerCase());
                     if (subRole && message.member.roles.cache.has(subRole.id)) {
                         return true;
                     }

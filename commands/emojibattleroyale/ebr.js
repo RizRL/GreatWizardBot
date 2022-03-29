@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 const Discord = require("discord.js");
 
-const ebr = require("../modules/emojibattleroyale.js");
+const ebr = require("../../modules/emojibattleroyale.js");
 
 /**
  * @param {Discord.Client} client
@@ -32,7 +32,7 @@ exports.conf = {
     enabled: true,
     guildOnly: true,
     aliases: [],
-    permLevel: "Bot Admin"
+    permLevel: "Administrator"
 };
 
 exports.help = {

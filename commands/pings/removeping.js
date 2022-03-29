@@ -1,4 +1,4 @@
-const { pingResponses } = require("../modules/settings.js");
+const { pingResponses } = require("../../modules/settings.js");
 
 exports.run = async (client, message, args) => {
     const ping = pingResponses.get(args[0]);
@@ -14,12 +14,12 @@ exports.conf = {
     enabled: true,
     guildOnly: true,
     aliases: [],
-    permLevel: "Bot Support"
+    permLevel: "Moderator"
 };
 
 exports.help = {
     name: "removeping",
-    category: "Sass",
+    category: "Fun",
     description: "*snip snip*",
     usage: "removeping [id]"
 };

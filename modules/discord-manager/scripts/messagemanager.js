@@ -20,11 +20,11 @@ const MMJson = {
     },
 
     PushChannelRulesObj: function (channelRulesObj) {
-        const arr
-            = MMJson.Obj.ChannelRulesObjs
+        const arr =
+            MMJson.Obj.ChannelRulesObjs
                 .filter(channelRulesObj2 =>
-                    ChannelRulesObj.GetChannelID(channelRulesObj2)
-                    != ChannelRulesObj.GetChannelID(channelRulesObj)
+                    ChannelRulesObj.GetChannelID(channelRulesObj2) !=
+                    ChannelRulesObj.GetChannelID(channelRulesObj)
                 );
         arr.push(channelRulesObj);
         MMJson.Obj.ChannelRulesObjs = arr;
@@ -40,8 +40,8 @@ const MMJson = {
         if (!MMJson.GetChannelRulesByChannelID(id)) {
             return; 
         }
-        const arr
-            = this.GetAllChannelRulesObjs()
+        const arr =
+            this.GetAllChannelRulesObjs()
                 .filter(channelRulesObj =>
                     ChannelRulesObj.GetChannelID(channelRulesObj) != id
                 );
@@ -52,8 +52,8 @@ const MMJson = {
         if (!MMJson.GetManagedMessageObjByMessageID(id)) {
             return; 
         }
-        const arr
-            = this.GetAllManagedMessageObjs()
+        const arr =
+            this.GetAllManagedMessageObjs()
                 .filter(managedMessageObj =>
                     ManagedMessageObj.GetChannelID(managedMessageObj) != id
                 );
@@ -166,8 +166,8 @@ function isChannelManaged(client, message) {
     if (message.channel.id == client.config.logChannels[client.user.id]) {
         return false; 
     }
-    const channelRulesObj
-        = MMJson.GetAllChannelRulesObjs().find(channelRulesObj =>
+    const channelRulesObj =
+        MMJson.GetAllChannelRulesObjs().find(channelRulesObj =>
             ChannelRulesObj.GetChannelID(channelRulesObj) == message.channel.id
         );
     if (!channelRulesObj) {
@@ -233,12 +233,12 @@ function purgeMessages() {
 
     const currentTimestamp = Math.floor(Date.now() / 1000);
     const managedMessageObjs = MMJson.GetAllManagedMessageObjs();
-    const messagesToDelete
-        = managedMessageObjs.filter(
+    const messagesToDelete =
+        managedMessageObjs.filter(
             managedMessageObj => ManagedMessageObj.GetDeleteAfterUnixTimestamp(managedMessageObj) <= currentTimestamp
         );
-    const messagesToSave
-        = managedMessageObjs.filter(
+    const messagesToSave =
+        managedMessageObjs.filter(
             managedMessageObj => ManagedMessageObj.GetDeleteAfterUnixTimestamp(managedMessageObj) > currentTimestamp
         );
 

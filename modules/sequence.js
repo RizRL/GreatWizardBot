@@ -69,13 +69,11 @@ exports.reset = async (client, message) => {
     if (!exports.Enmap.has(message.channel.id)) {
         return;
     }
-    if (exports.Enmap.get(message.channel.id, "current") - 1
-        > exports.Enmap.get(message.channel.id, "record")) {
-        exports.Enmap.set(
-            message.channel.id,
-            exports.Enmap.get(message.channel.id, "current") - 1,
-            "record"
-        );
+
+    const current = exports.Enmap.get(message.channel.id, "current") - 1;
+    const newRecord = current > exports.Enmap.get(message.channel.id, "record");
+    if (newRecord) {
+        exports.Enmap.set(message.channel.id, current, "record");
     }
     exports.Enmap.set(message.channel.id, 1, "current");
     

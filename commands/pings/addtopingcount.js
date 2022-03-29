@@ -1,4 +1,4 @@
-const { pingCounter } = require("../modules/settings.js");
+const { pingCounter } = require("../../modules/settings.js");
 
 exports.run = async (client, message, args) => {
     const user = message.mentions.users.first();
@@ -21,12 +21,12 @@ exports.conf = {
     enabled: true,
     guildOnly: true,
     aliases: [],
-    permLevel: "Bot Admin"
+    permLevel: "Moderator"
 };
 
 exports.help = {
     name: "addtopingcount",
-    category: "System",
+    category: "Fun",
     description: "Numbers go up",
     usage: "addtopingcount [mention] [int]"
 };

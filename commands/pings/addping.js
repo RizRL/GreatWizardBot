@@ -1,4 +1,4 @@
-const { pingResponses } = require("../modules/settings.js");
+const { pingResponses } = require("../../modules/settings.js");
 
 exports.run = async (client, message, args) => {
     const response = pingResponses.set(pingResponses.autonum, args.join(" "));
@@ -9,12 +9,12 @@ exports.conf = {
     enabled: true,
     guildOnly: true,
     aliases: [],
-    permLevel: "Bot Support"
+    permLevel: "Moderator"
 };
 
 exports.help = {
     name: "addping",
-    category: "Sass",
+    category: "Fun",
     description: "*snap snap*",
     usage: "addping [response]"
 };

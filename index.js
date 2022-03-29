@@ -12,6 +12,7 @@ const { Client, Collection } = require("discord.js");
 const { readdirSync } = require("fs");
 const { intents, partials, permLevels } = require("./config.js");
 const logger = require("./modules/logger.js");
+const functions = require("./modules/functions.js");
 // This is your client. Some people call it `bot`, some people call it `self`,
 // some might call it `cootchie`. Either way, when you see `client.something`,
 // or `bot.something`, this is what we're referring to. Your client.
@@ -47,17 +48,19 @@ client.container = {
 
 const init = async () => {
 
-    // Here we load **commands** into memory, as a collection, so they're accessible
-    // here and everywhere else.
-    const commands = readdirSync("./commands/").filter(file => file.endsWith(".js"));
-    for (const file of commands) {
-        const props = require(`./commands/${file}`);
-        logger.log(`Loading Command: ${props.help.name}. 👌`, "log");
-        client.container.commands.set(props.help.name, props);
-        props.conf.aliases.forEach(alias => {
-            client.container.aliases.set(alias, props.help.name);
-        });
-    }
+    await functions.loadAllCommands(client);
+
+    // // Here we load **commands** into memory, as a collection, so they're accessible
+    // // here and everywhere else.
+    // const commands = readdirSync("./commands/").filter(file => file.endsWith(".js"));
+    // for (const file of commands) {
+    //     const props = require(`./commands/${file}`);
+    //     logger.log(`Loading Command: ${props.help.name}. 👌`, "log");
+    //     client.container.commands.set(props.help.name, props);
+    //     props.conf.aliases.forEach(alias => {
+    //         client.container.aliases.set(alias, props.help.name);
+    //     });
+    // }
 
     // Now we load any **slash** commands you may have in the ./slash directory.
     const slashFiles = readdirSync("./slash").filter(file => file.endsWith(".js"));

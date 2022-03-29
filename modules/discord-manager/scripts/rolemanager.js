@@ -132,8 +132,8 @@ exports.TimedRoles = {
                     }
                 });
 
-                timedRoles[guildID][memberID]
-                    = timedRoles[guildID][memberID].filter(
+                timedRoles[guildID][memberID] =
+                    timedRoles[guildID][memberID].filter(
                         e => e.timeToRemove > currentTime
                     );
                 if (!timedRoles[guildID][memberID].length) {

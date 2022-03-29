@@ -46,6 +46,8 @@ async function respondToPings(client, msg) {
     const randomResponse = pingResponses.random();
     const key = pingResponses.findKey((e) => e == randomResponse);
 
+    logger.log(`PING RESPONSE: #${key} selected.`);
+
     // Try to find a function by the key.
     // If we find it, we want the response to be whatever the function returns.
     // If there's no function, or it fails for some reason, 
@@ -53,13 +55,15 @@ async function respondToPings(client, msg) {
     let func;
     try {
         func = require(`./pingResponseFuncs/f${key}.js`);
+        logger.log(`PING RESPONSE: #${key} function FOUND.`);
     } catch (e) {
-        logger.warn(e);
+        logger.log(`PING RESPONSE: #${key} function NOT FOUND.`);
     }
+
     const finalResponse = func
         ? await func(client, msg)
         : randomResponse;
-
+    
     sendLargeMessage(msg.channel, finalResponse);
 }
 

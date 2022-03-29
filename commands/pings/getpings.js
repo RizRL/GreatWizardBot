@@ -1,5 +1,5 @@
-const messageUtils = require("../modules/messageUtils.js");
-const { pingResponses } = require("../modules/settings.js");
+const messageUtils = require("../../modules/messageUtils.js");
+const { pingResponses } = require("../../modules/settings.js");
 
 exports.run = async (client, message) => {
     let response = "__Current Ping Resonses__\n\n";
@@ -18,12 +18,12 @@ exports.conf = {
     enabled: true,
     guildOnly: true,
     aliases: [],
-    permLevel: "Bot Support"
+    permLevel: "Moderator"
 };
 
 exports.help = {
     name: "getpings",
-    category: "Sass",
+    category: "Fun",
     description: "*snoop snoop*",
     usage: "getpings"
 };
