@@ -1,14 +1,5 @@
+// eslint-disable-next-line no-unused-vars
 const { Intents, Message } = require("discord.js");
-
-/**
- * Roles needed for future reference.
- */
-const roleIds = {
-    sub: "923874325856137256",
-    subTier1: "923874325856137257",
-    subTier2: "923874325856137258",
-    subTier3: "923874325856137259",
-};
 
 /**
  * Config referenced in index
