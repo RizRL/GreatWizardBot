@@ -66,6 +66,9 @@ module.exports = async (client, message) => {
     // using this const varName = thing OR otherThing; is a pretty efficient
     // and clean way to grab one of 2 values!
     if (!cmd) {
+        if (message.mentions.members.get(client.user.id)) {
+            messageUtils.respondToPings(client, message);
+        }
         return;
     }
 
