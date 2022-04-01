@@ -37,8 +37,18 @@ exports.add = async (client, message, args) => {
     exports.Enmap.set(message.channel.id, {
         current: 1,
         record: 0,
-        role: role.id
+        totalContributions: 0,
+        role: role.id,
+
+        userYeets: {},
+
+        userContributionsCurrent: {},
+        userContributionsTotal: {},
+
+        userCountsCurrent: {},
+        userCountsTotal: {},
     });
+
     return message.react(riz.Unicode.ThumbsUp);
 
 }; 
@@ -60,7 +70,7 @@ exports.remove = async (client, message, args) => {
 };
 
 /**
- * Remove a sequence channel.
+ * Reset a sequence channel.
  * @param {Discord.Client} client
  * @param {Discord.Message} message
  * */
@@ -71,12 +81,61 @@ exports.reset = async (client, message) => {
     }
 
     const current = exports.Enmap.get(message.channel.id, "current") - 1;
+    exports.Enmap.set(message.channel.id, 1, "current");
+
+    const totalContributions = exports.Enmap.ensure(message.channel.id, 0, "totalContributions");
+    exports.Enmap.set(message.channel.id, current + totalContributions, "totalContributions");
+
     const newRecord = current > exports.Enmap.get(message.channel.id, "record");
     if (newRecord) {
         exports.Enmap.set(message.channel.id, current, "record");
     }
-    exports.Enmap.set(message.channel.id, 1, "current");
+
+    exports.Enmap.set(message.channel.id, {}, "userContributionsCurrent");
+    exports.Enmap.set(message.channel.id, {}, "userCountsCurrent");
+
+    exports.Enmap.ensure(message.channel.id, {}, "userYeets");
+    exports.Enmap.ensure(message.channel.id, 0, `userYeets.${message.author.id}`);
+    exports.Enmap.inc(message.channel.id, `userYeets.${message.author.id}`);
     
+};
+
+/**
+ * @param {Discord.Message} message 
+ * @param {("Current"|"Total")} type 
+ */
+function saveContribution(message, type) {
+    exports.Enmap.ensure(message.channel.id, {}, `userContributions${type}`);
+    const path = `userContributions${type}.${message.author.id}`;
+    const contribution = exports.Enmap.ensure(message.channel.id, 0, path);
+    exports.Enmap.set(message.channel.id, Number(message.content) + contribution, path);
+}
+
+/**
+ * @param {Discord.Message} message 
+ * @param {("Current"|"Total")} type 
+ */
+function saveCount(message, type = "Current" || "Total") {
+    exports.Enmap.ensure(message.channel.id, {}, `userCounts${type}`);
+    const path = `userCounts${type}.${message.author.id}`;
+    exports.Enmap.ensure(message.channel.id, 0, path);
+    exports.Enmap.inc(message.channel.id, path);
+}
+
+/**
+ * Increment the sequence
+ * @param {Discord.Client} client
+ * @param {Discord.Message} message
+ * */
+exports.increment = async (client, message) => {
+
+    exports.Enmap.inc(message.channel.id, "current");
+
+    saveContribution(message, "Current");
+    saveContribution(message, "Total");
+    saveCount(message, "Current");
+    saveCount(message, "Total");
+
 };
 
 /**
@@ -93,20 +152,31 @@ exports.check = async (client, message) => {
         return;
     }
     if (message.content == exports.Enmap.get(message.channel.id, "current")) {
-        exports.Enmap.inc(message.channel.id, "current");
+        await exports.increment(client, message);
         return;
     }
+
+    // Yeet the member via role
+    const roleID = exports.Enmap.get(message.channel.id, "role");
+    await message.member.roles.add(roleID).catch(console.error);
 
     const current = exports.Enmap.get(message.channel.id, "current");
     const yeetedLength = (+new Date() / 1000) + (Number(current) * 60);
     const yeetedMinutes = Math.round((yeetedLength - (+new Date() / 1000)) / 60);
-
-    exports.reset(client, message);
-    const record = exports.Enmap.get(message.channel.id, "record");
-    const roleID = exports.Enmap.get(message.channel.id, "role");
-    const string = [`***${riz.Games.GetYeetedString(message.author)} [${yeetedMinutes}m]***`, `\`Current channel record: ${record}\``].join("\n");
-    await message.member.roles.add(roleID).catch(console.error);
     manager.RoleManager.TimedRoles.Set(message.guild.id, message.member.id, roleID, yeetedLength);
+
+    // Reset
+    exports.reset(client, message);
+
+    // Construct a message and send it.
+    const record = exports.Enmap.get(message.channel.id, "record");
+    const totalContributions = exports.Enmap.get(message.channel.id, "totalContributions");
+    const string = [
+        `***${riz.Games.GetYeetedString(message.author)} [${yeetedMinutes}m]***`,
+        `\`Peak Sequence: ${record}\``,
+        `\`Contributions: ${totalContributions}\``
+    ].join("\n");
+
     message.channel.send(string).catch(console.error);
 
 };
