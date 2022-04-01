@@ -1,4 +1,5 @@
-const { Util } = require("discord.js");
+// eslint-disable-next-line no-unused-vars
+const { Message, TextChannel, Util } = require("discord.js");
 const logger = require("../modules/logger.js");
 const { pingCounter, pingResponses } = require("./settings.js");
 
@@ -67,14 +68,36 @@ async function respondToPings(client, msg) {
     sendLargeMessage(msg.channel, finalResponse);
 }
 
-async function sendLargeMessage(channel, str, char = " ") {
+/**
+ * @param {(Message|TextChannel)} target 
+ * @param {string} str 
+ * @param {string} char 
+ * @returns 
+ */
+async function sendLargeMessage(target, str, char = "\n") {
+
     const msgArray = [];
     const strArray = Util.splitMessage(str, {
         char: char
     });
     while (strArray.length) {
-        msgArray.push(await channel.send(strArray.shift()).catch(console.error));
+
+        switch (true) { 
+            case target instanceof Message: { 
+                msgArray.push(await target.reply(strArray.shift()).catch(console.error));
+                break;
+            }
+                
+            case target instanceof TextChannel: { 
+                msgArray.push(await target.send(strArray.shift()).catch(console.error));
+                break;
+            }
+                
+            default:
+                break;
+        }
     }
+
     return msgArray;
 }
 
