@@ -160,9 +160,12 @@ exports.check = async (client, message) => {
     const roleID = exports.Enmap.get(message.channel.id, "role");
     await message.member.roles.add(roleID).catch(console.error);
 
+    // Yeet by length of (1 minute * sequence length + sequences broken)
+    const time = (+new Date() / 1000);
+    const yeets = exports.Enmap.get(message.channel.id, `userYeets.${message.author.id}`) || 0;
     const current = exports.Enmap.get(message.channel.id, "current");
-    const yeetedLength = (+new Date() / 1000) + (Number(current) * 60);
-    const yeetedMinutes = Math.round((yeetedLength - (+new Date() / 1000)) / 60);
+    const yeetedLength = time + (Number(yeets) * 60) + (Number(current) * 60);
+    const yeetedMinutes = Math.round((yeetedLength - time) / 60);
     manager.RoleManager.TimedRoles.Set(message.guild.id, message.member.id, roleID, yeetedLength);
 
     // Reset
