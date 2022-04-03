@@ -4,6 +4,7 @@ const Discord = require("discord.js");
 const Enmap = require("enmap");
 const logger = require("./logger.js");
 
+const love = require("./love.js");
 const manager = require("./discord-manager");
 const riz = require("./riz.js");
 
@@ -97,6 +98,8 @@ exports.reset = async (client, message) => {
     exports.Enmap.ensure(message.channel.id, {}, "userYeets");
     exports.Enmap.ensure(message.channel.id, 0, `userYeets.${message.author.id}`);
     exports.Enmap.inc(message.channel.id, `userYeets.${message.author.id}`);
+
+    love.dec(message.author.id, message.author.permLevel > 0);
     
 };
 
@@ -136,6 +139,8 @@ exports.increment = async (client, message) => {
     saveCount(message, "Current");
     saveCount(message, "Total");
 
+    love.inc(message.author.id, message.author.permLevel > 0);
+
 };
 
 /**
@@ -161,10 +166,16 @@ exports.check = async (client, message) => {
     await message.member.roles.add(roleID).catch(console.error);
 
     // Yeet by length of (1 minute * sequence length + sequences broken)
+    // Half time if over average love.
     const time = (+new Date() / 1000);
     const yeets = exports.Enmap.get(message.channel.id, `userYeets.${message.author.id}`) || 0;
     const current = exports.Enmap.get(message.channel.id, "current");
-    const yeetedLength = time + (Number(yeets) * 60) + (Number(current) * 60);
+
+    const yeetedLength = (time +
+        (Number(yeets) * 60) +
+        (Number(current) * 60)) /
+        love.compare(message.author.id) ? 2 : 1;
+    
     const yeetedMinutes = Math.round((yeetedLength - time) / 60);
     manager.RoleManager.TimedRoles.Set(message.guild.id, message.member.id, roleID, yeetedLength);
 

@@ -1,6 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 const { Message, TextChannel, Util } = require("discord.js");
 const logger = require("../modules/logger.js");
+const love = require("../modules/love.js");
 const { pingCounter, pingResponses } = require("./settings.js");
 
 const mentionRegex = /<(a)?:?((\w{2,32})|(@|#|&|!)*)?:?(\d{17,19})>/g;
@@ -42,6 +43,7 @@ function getEmojis(guild, arr) {
 async function respondToPings(client, msg) {
     pingCounter.ensure(msg.author.id, 0);
     pingCounter.inc(msg.author.id);
+    love.inc(msg.author.id, msg.author.permLevel > 0);
 
     // do something random
     const randomResponse = pingResponses.random();

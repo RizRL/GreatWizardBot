@@ -6,9 +6,6 @@ module.exports = {
     commandUtils: new Enmap({
         name: "commandUtils",
     }),
-    loveFactor: new Enmap({
-        name: "loveFactor",
-    }),
     pingResponses: new Enmap({
         name: "pingResponses",
     }),

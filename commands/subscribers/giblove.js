@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 const Discord = require("discord.js");
-const { loveFactor } = require("../../modules/settings.js");
+const love = require("../../modules/love.js");
 
 /**
  * @param {Discord.Client} client
@@ -9,24 +9,20 @@ const { loveFactor } = require("../../modules/settings.js");
  * @param {Number} level
  */
 exports.run = async (client, message, [action, ...args], level) => {
-
-    loveFactor.ensure(message.author.id, 0);
-    loveFactor.inc(message.author.id);
-    
+    love.inc(message.author.id, message.author.permLevel > 0);
     message.channel.send("Affection delivered.");
-
 };
 
 exports.conf = {
     enabled: true,
     guildOnly: true,
-    aliases: [],
+    aliases: ["gib"],
     permLevel: "Subscriber"
 };
 
 exports.help = {
-    name: "loveme",
+    name: "giblove",
     category: "Subs",
     description: "Receive mandatory affection.",
-    usage: "loveme"
+    usage: "giblove"
 };
