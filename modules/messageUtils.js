@@ -1,7 +1,8 @@
 // eslint-disable-next-line no-unused-vars
-const { Message, TextChannel, Util } = require("discord.js");
+const { Client, Guild, GuildMember, Message, TextChannel, Util } = require("discord.js");
 const logger = require("../modules/logger.js");
-const { pingCounter, pingResponses } = require("./settings.js");
+const love = require("../modules/love.js");
+const { pingCounter, pingDisable, pingResponses } = require("./settings.js");
 
 const mentionRegex = /<(a)?:?((\w{2,32})|(@|#|&|!)*)?:?(\d{17,19})>/g;
 
@@ -37,11 +38,43 @@ function getEmojis(guild, arr) {
     return emojis;
 }
 
+/**
+ * Determine new SE emojis.
+ * @param {Client} client
+ * @param {Guild} guild
+ * */
+function getRandomEmojis(guild, amt = 1, allowAnim = true) {
+    const emojis = [];
+    let cache = guild.emojis.cache.filter(e => !e.deleted && e.available);
+    if (!allowAnim) { 
+        cache = cache.filter(e => !e.animated);
+    }
+    while (emojis.length < Math.min(amt, cache.size)) {
+        const randEmoji = cache.random();
+        if (emojis.filter(e => e.id == randEmoji.id)) {
+            emojis.push(randEmoji);
+        }
+    }
+    return emojis;
+}
+
+/**
+ * Use PingDisable to provide either a mention or string.
+ * @param {GuildMember} member 
+ */
+function getMentionString(member) { 
+    const setting = pingDisable.ensure(member.id, 1);
+    return setting == 1
+        ? `${member.user}`
+        : `${member.displayName}`;
+}
+
 // If we're responding to pings, we've already ruled out
 // that we may be running a command.
 async function respondToPings(client, msg) {
     pingCounter.ensure(msg.author.id, 0);
     pingCounter.inc(msg.author.id);
+    love.inc(msg.author.id, msg.author.permLevel > 0);
 
     // do something random
     const randomResponse = pingResponses.random();
@@ -105,6 +138,8 @@ module.exports = {
     mentionRegex,
     checkForWord,
     getEmojis,
+    getMentionString,
+    getRandomEmojis,
     respondToPings,
     sendLargeMessage,
 };

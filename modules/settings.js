@@ -6,14 +6,14 @@ module.exports = {
     commandUtils: new Enmap({
         name: "commandUtils",
     }),
-    loveFactor: new Enmap({
-        name: "loveFactor",
+    pingCounter: new Enmap({
+        name: "pingCounter",
+    }),
+    pingDisable: new Enmap({
+        name: "pingDisable",
     }),
     pingResponses: new Enmap({
         name: "pingResponses",
-    }),
-    pingCounter: new Enmap({
-        name: "pingCounter",
     }),
     settings: new Enmap({
         name: "settings",

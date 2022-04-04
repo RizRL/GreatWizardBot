@@ -2,6 +2,7 @@ const logger = require("../modules/logger.js");
 const manager = require("../modules/discord-manager");
 
 const ebr = require("../modules/emojibattleroyale.js");
+const love = require("../modules/love.js");
 const sequence = require("../modules/sequence.js");
 
 const riz = require("../modules/riz.js");
@@ -16,6 +17,7 @@ module.exports = async client => {
     // to ensure their Enmap is loaded before being used.
     await Promise.all([
         ebr.init(client),
+        love.init(client),
         sequence.init(client),
     ]);
 

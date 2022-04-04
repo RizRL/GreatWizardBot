@@ -1,5 +1,5 @@
 const messageUtils = require("./messageUtils.js");
-const { loveFactor } = require("./settings.js");
+const love = require("./love.js");
 
 module.exports = (msg) => {
     const [isExplosion, isNice] = [
@@ -12,8 +12,7 @@ module.exports = (msg) => {
         if (isExplosion) {
             msg.react(...messageUtils.getEmojis(msg.guild, ["youWHAT"]))
                 .then(r => {
-                    loveFactor.ensure(msg.author.id, 0);
-                    loveFactor.inc(msg.author.id);
+                    love.inc(msg.author.id, msg.author.permLevel > 0);
                 })
                 .catch(console.error);
         }
@@ -22,8 +21,7 @@ module.exports = (msg) => {
         if (isNice) {
             msg.react(...messageUtils.getEmojis(msg.guild, ["NICE"]))
                 .then(r => {
-                    loveFactor.ensure(msg.author.id, 0);
-                    loveFactor.inc(msg.author.id);
+                    love.inc(msg.author.id, msg.author.permLevel > 0);
                 })
                 .catch(console.error);
         }
@@ -32,8 +30,7 @@ module.exports = (msg) => {
         if (Math.floor(Math.random() * 69) + 1 === 69) {
             msg.react(msg.guild.emojis.cache.random())
                 .then(r => {
-                    loveFactor.ensure(msg.author.id, 0);
-                    loveFactor.inc(msg.author.id);
+                    love.inc(msg.author.id, msg.author.permLevel > 0);
                 })
                 .catch(console.error);
         }
