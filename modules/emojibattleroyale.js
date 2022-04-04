@@ -96,11 +96,12 @@ async function levelUp(channel) {
     exports.Enmap.set(channel.id, newHealth, "health.current");
     exports.Enmap.inc(channel.id, "level");
 
-    const str = `
-${messageUtils.getMentionString(randomLoveMember)} wins the lottery and receives mandatory affection. \`[+${userLevelDamage}]\`
-
-\`NEXT:\` LEVEL ${prevLevel + 1}
-\`PREV:\` ${levelUsers.length} Users | ${levelPosts} Posts`;
+    const str = [
+        `${messageUtils.getMentionString(randomLoveMember)} wins the lottery and receives mandatory affection. \`[+${userLevelDamage}]\``,
+        "",
+        `\`NEXT:\` LEVEL ${prevLevel + 1}`,
+        `\`PREV:\` ${levelUsers.length} Users | ${levelPosts} Posts`
+    ].join("\n");
     channel.send(str);
 }
 
