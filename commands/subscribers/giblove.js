@@ -10,7 +10,8 @@ const love = require("../../modules/love.js");
  */
 exports.run = async (client, message, [action, ...args], level) => {
     love.inc(message.author.id, message.author.permLevel > 0);
-    message.channel.send("Affection delivered.");
+    const value = love.get(message.author.id);
+    message.channel.send(`Affection delivered. <3 [${value}]`);
 };
 
 exports.conf = {

@@ -102,7 +102,7 @@ const Unicode = {
     Heart: "❤️",
     One: "1⃣",
     Two: "2⃣",
-
+    Lightning: "🌩️",
 };
 
 const Util = {

@@ -9,7 +9,7 @@ const messageUtils = require("../../modules/messageUtils.js");
  * @param {Array} args
  * @param {Number} level
  */
-exports.run = async (client, message, [action, ...args], level) => {
+exports.run = async (client, message, args, level) => {
 
     const loveArr = [];
     love.Enmap.keyArray().map((e) => {

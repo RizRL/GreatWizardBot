@@ -20,8 +20,6 @@ exports.init = async (client) => {
 exports.give = (id, amt) => { 
     const current = exports.Enmap.ensure(id, 0);
     exports.Enmap.set(id, current + amt);
-
-    logger.log(`LOVE ${id} = ${current + amt}`);
 };
 
 /**
@@ -49,8 +47,6 @@ exports.dec = (id, isSub = false) => {
  */
 exports.get = (id) => {
     const current = exports.Enmap.ensure(id, 0);
-    logger.log(`LOVE ${id} = ${current}`);
-
     return Number(current);
 };
 
@@ -60,7 +56,6 @@ exports.get = (id) => {
  */
 exports.set = (id, amt) => {
     exports.Enmap.set(id, amt);
-    logger.log(`LOVE ${id} = ${amt}`);
 };
 
 /**

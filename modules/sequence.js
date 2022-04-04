@@ -145,6 +145,7 @@ exports.increment = async (client, message) => {
 
 /**
  * Check a sequence channel.
+ * TODO: Fix the yeet length
  * @param {Discord.Client} client
  * @param {Discord.Message} message
  * */
@@ -171,13 +172,12 @@ exports.check = async (client, message) => {
     const yeets = exports.Enmap.get(message.channel.id, `userYeets.${message.author.id}`) || 0;
     const current = exports.Enmap.get(message.channel.id, "current");
 
-    const yeetedLength = (time +
-        (Number(yeets) * 60) +
-        (Number(current) * 60)) /
-        love.compare(message.author.id) ? 2 : 1;
-    
-    const yeetedMinutes = Math.round((yeetedLength - time) / 60);
-    manager.RoleManager.TimedRoles.Set(message.guild.id, message.member.id, roleID, yeetedLength);
+    const yeetedLength = 60 * Math.round(
+        (Number(yeets) + Number(current)) /
+        love.compare(message.author.id) ? 2 : 1
+    );
+    const yeetedMinutes = Math.round((yeetedLength) / 60);
+    manager.RoleManager.TimedRoles.Set(message.guild.id, message.member.id, roleID, time + yeetedLength);
 
     // Reset
     exports.reset(client, message);
