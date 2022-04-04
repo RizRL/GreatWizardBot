@@ -23,12 +23,8 @@ function updateChannel(channel) {
     }
 
     const level = exports.Enmap.get(channel.id, "level");
-    const currentHealth = exports.Enmap.get(channel.id, "health.current");
-    const totalHealth = exports.Enmap.get(channel.id, "health.total");
     exports.Enmap.set(channel.id, time, "lastUpdate");
-    return channel.setTopic(
-        `LEVEL ${level} - HP: ${currentHealth} / ${totalHealth} [${date.toUTCString()}]`
-    );
+    return channel.setTopic(`LEVEL ${level} [${date.toUTCString()}]`);
 }
 
 /**
@@ -70,7 +66,7 @@ function getUserDamage(channel, id, level = 0) {
  * New level new boss.
  * @param {Discord.TextChannel} channel
  * */
-function levelUp(channel) {
+async function levelUp(channel) {
     const prevLevel = exports.Enmap.get(channel.id, "level");
     const totalHealth = exports.Enmap.get(channel.id, "health.total");
     const newHealth = totalHealth * 2;
@@ -79,8 +75,9 @@ function levelUp(channel) {
     const levelPosts = exports.Enmap.get(channel.id, "current.posts");
 
     const randomLove = levelUsers[Math.floor(Math.random() * levelUsers.length)];
-    const userDamage = getUserDamage(channel, randomLove, prevLevel);
-    love.give(randomLove, userDamage);
+    const randomLoveMember = await channel.guild.members.fetch(randomLove);
+    const userLevelDamage = getUserDamage(channel, randomLove, prevLevel);
+    love.give(randomLove, userLevelDamage);
 
     exports.Enmap.set(
         channel.id,
@@ -99,14 +96,19 @@ function levelUp(channel) {
     exports.Enmap.set(channel.id, newHealth, "health.current");
     exports.Enmap.inc(channel.id, "level");
 
-    channel.send(`LEVEL ${prevLevel + 1} \`[${levelUsers.length} | ${levelPosts}]\`\n<@${randomLove}> wins the lottery and receives mandatory affection.`);
+    const str = `
+${messageUtils.getMentionString(randomLoveMember)} wins the lottery and receives mandatory affection. \`[+${userLevelDamage}]\`
+
+\`NEXT:\` LEVEL ${prevLevel + 1}
+\`PREV:\` ${levelUsers.length} Users | ${levelPosts} Posts`;
+    channel.send(str);
 }
 
 /**
  * Adjust values.
  * @param {Discord.Message} message
  * */
-function inc(message) {
+async function inc(message) {
     const damage = 1;
     let mult = 1;
     for (const emoji of exports.Enmap.get(message.channel.id, "emojis")) { 
@@ -126,10 +128,11 @@ function inc(message) {
     exports.Enmap.inc(message.channel.id, "current.posts");
     exports.Enmap.inc(message.channel.id, "overall.posts");
     exports.Enmap.set(message.channel.id, newHealth, "health.current");
+
     if (newHealth <= 0) { 
-        levelUp(message.channel);
+        await levelUp(message.channel);
+        updateChannel(message.channel);
     }
-    updateChannel(message.channel);
 }
 
 /**
@@ -146,19 +149,17 @@ function yeet(message) {
     const time = (+new Date() / 1000);
     const overallUsers = exports.Enmap.get(message.channel.id, "overall.users").length;
     const overallPosts = exports.Enmap.get(message.channel.id, "overall.posts");
-    const yeetedLength = 60 * Math.round(
-        (overallUsers + overallPosts) /
-            love.compare(message.author.id) ? 2 : 1
-    );
-    const yeetedMinutes = Math.round((yeetedLength) / 60);
-    manager.RoleManager.TimedRoles.Set(message.guild.id, message.member.id, roleID, time + yeetedLength);
+    const div = love.compare(message.author.id) ? 2 : 1;
+    const yeetedMinutes = Math.round((1 + overallUsers + overallPosts) / div);
+    const yeetedSeconds = 60 * yeetedMinutes;
+    manager.RoleManager.TimedRoles.Set(message.guild.id, message.member.id, roleID, time + yeetedSeconds);
 
     love.dec(message.author.id, message.author.permLevel > 0);
 
     const str = `
 ***${riz.Games.GetYeetedString(message.author)} [${yeetedMinutes}m]***
 
-*Overall: ${overallUsers} users posted emojis ${overallPosts} consecutive times.*`;
+\`LAST:\` ${overallUsers} Users | ${overallPosts} Posts`;
     message.channel.send(str);
 }
 
@@ -174,13 +175,16 @@ function reset(channel) {
         posts: 0,
         damage: 0,
     };
+    exports.Enmap.set(
+        channel.id,
+        messageUtils.getRandomEmojis(channel.guild, 3, false).map(e => e.identifier),
+        "emojis");
     exports.Enmap.set(channel.id, obj, "current");
     exports.Enmap.set(channel.id, obj, "overall");
     exports.Enmap.set(channel.id, {}, "participants");
     exports.Enmap.set(channel.id, 1, "level");
     exports.Enmap.set(channel.id, 2, "health.total");
     exports.Enmap.set(channel.id, 2, "health.current");
-    exports.Enmap.set(channel.id, messageUtils.getRandomEmojis(channel.guild, 3, false).map(e => e.identifier), "emojis");
 }
 
 

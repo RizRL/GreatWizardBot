@@ -1,8 +1,8 @@
 // eslint-disable-next-line no-unused-vars
-const { Client, Guild, Message, TextChannel, Util } = require("discord.js");
+const { Client, Guild, GuildMember, Message, TextChannel, Util } = require("discord.js");
 const logger = require("../modules/logger.js");
 const love = require("../modules/love.js");
-const { pingCounter, pingResponses } = require("./settings.js");
+const { pingCounter, pingDisable, pingResponses } = require("./settings.js");
 
 const mentionRegex = /<(a)?:?((\w{2,32})|(@|#|&|!)*)?:?(\d{17,19})>/g;
 
@@ -56,6 +56,17 @@ function getRandomEmojis(guild, amt = 1, allowAnim = true) {
         }
     }
     return emojis;
+}
+
+/**
+ * Use PingDisable to provide either a mention or string.
+ * @param {GuildMember} member 
+ */
+function getMentionString(member) { 
+    const setting = pingDisable.ensure(member.id, 1);
+    return setting == 1
+        ? `${member.user}`
+        : `${member.displayName}`;
 }
 
 // If we're responding to pings, we've already ruled out
@@ -127,6 +138,7 @@ module.exports = {
     mentionRegex,
     checkForWord,
     getEmojis,
+    getMentionString,
     getRandomEmojis,
     respondToPings,
     sendLargeMessage,
