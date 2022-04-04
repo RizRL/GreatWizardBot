@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-unused-vars
-const { Message, TextChannel, Util } = require("discord.js");
+const { Client, Guild, Message, TextChannel, Util } = require("discord.js");
 const logger = require("../modules/logger.js");
 const love = require("../modules/love.js");
 const { pingCounter, pingResponses } = require("./settings.js");
@@ -33,6 +33,26 @@ function getEmojis(guild, arr) {
         const emoji = guild.emojis.cache.find(e => e.name.toLowerCase() === arr[i].toLowerCase());
         if (emoji) {
             emojis.push(emoji);
+        }
+    }
+    return emojis;
+}
+
+/**
+ * Determine new SE emojis.
+ * @param {Client} client
+ * @param {Guild} guild
+ * */
+function getRandomEmojis(guild, amt = 1, allowAnim = true) {
+    const emojis = [];
+    let cache = guild.emojis.cache.filter(e => !e.deleted && e.available);
+    if (!allowAnim) { 
+        cache = cache.filter(e => !e.animated);
+    }
+    while (emojis.length < Math.min(amt, cache.size)) {
+        const randEmoji = cache.random();
+        if (emojis.filter(e => e.id == randEmoji.id)) {
+            emojis.push(randEmoji);
         }
     }
     return emojis;
@@ -107,6 +127,7 @@ module.exports = {
     mentionRegex,
     checkForWord,
     getEmojis,
+    getRandomEmojis,
     respondToPings,
     sendLargeMessage,
 };

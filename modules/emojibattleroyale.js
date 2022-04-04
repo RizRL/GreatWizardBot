@@ -6,55 +6,37 @@ const logger = require("./logger.js");
 
 const love = require("./love.js");
 const manager = require("./discord-manager");
+const messageUtils = require("./messageUtils.js");
 const riz = require("./riz.js");
 
 /**
- * Determine new SE emojis.
- * @param {Discord.Client} client
- * @param {Discord.Message} message
- * */
-function getSuperEmojis(client, message) { 
-    const emojis = [];
-    const cache = message.guild.emojis.cache.filter(e => !e.deleted && !e.animated && e.available);
-    while (emojis.length < Math.min(3, cache.size)) { 
-        const newEmoji = cache.random();
-        if (emojis.filter(e => e.id == newEmoji.id)) { 
-            emojis.push(newEmoji.identifier);
-        }
-    }
-    return emojis;
-}
-
-/**
  * Update the channel topic with relevant data.
- * @param {Discord.Client} client
- * @param {Discord.Message} message
+ * @param {Discord.TextChannel} channel
  * */
-function updateChannel(client, message) { 
+function updateChannel(channel) { 
     // Only update if at last 5 minutes have passed.
     const date = new Date();
     const time = Math.round(+date / 1000);
-    const skipUpdate = (time - exports.Enmap.get(message.channel.id, "lastUpdate")) < (60 * 5);
+    const skipUpdate = (time - exports.Enmap.get(channel.id, "lastUpdate")) < (60 * 5);
     if (skipUpdate) { 
         return;
     }
 
-    const level = exports.Enmap.get(message.channel.id, "level");
-    const currentHealth = exports.Enmap.get(message.channel.id, "health.current");
-    const totalHealth = exports.Enmap.get(message.channel.id, "health.total");
-    exports.Enmap.set(message.channel.id, time, "lastUpdate");
-    return message.channel.setTopic(
+    const level = exports.Enmap.get(channel.id, "level");
+    const currentHealth = exports.Enmap.get(channel.id, "health.current");
+    const totalHealth = exports.Enmap.get(channel.id, "health.total");
+    exports.Enmap.set(channel.id, time, "lastUpdate");
+    return channel.setTopic(
         `LEVEL ${level} - HP: ${currentHealth} / ${totalHealth} [${date.toUTCString()}]`
     );
 }
 
 /**
  * Save participation.
- * @param {Discord.Client} client
  * @param {Discord.Message} message
  * @param {number} dmg
  * */
-function recordDamage(client, message, dmg = 1) {
+function recordDamage(message, dmg = 1) {
     const level = exports.Enmap.get(message.channel.id, "level");
     const path = `participants.${level}.${message.author.id}`;
     const userDamage = exports.Enmap.ensure(message.channel.id, 0, path);
@@ -71,38 +53,37 @@ function recordDamage(client, message, dmg = 1) {
 
 /**
  * Save participation.
- * @param {Discord.Client} client
- * @param {Discord.Message} message
+ * @param {Discord.TextChannel} channel
+ * @param {Discord.Snowflake} id
  * @param {number} level
  * */
-function getUserDamage(message, id, level = 0) {
+function getUserDamage(channel, id, level = 0) {
     if (!level) { 
-        level = exports.Enmap.get(message.channel.id, "level");
+        level = exports.Enmap.get(channel.id, "level");
     }
     const path = `participants.${level}.${id}`;
-    const userDamage = exports.Enmap.ensure(message.channel.id, 0, path);
+    const userDamage = exports.Enmap.ensure(channel.id, 0, path);
     return userDamage;
 }
 
 /**
  * New level new boss.
- * @param {Discord.Client} client
- * @param {Discord.Message} message
+ * @param {Discord.TextChannel} channel
  * */
-function levelUp(client, message) {
-    const prevLevel = exports.Enmap.get(message.channel.id, "level");
-    const totalHealth = exports.Enmap.get(message.channel.id, "health.total");
+function levelUp(channel) {
+    const prevLevel = exports.Enmap.get(channel.id, "level");
+    const totalHealth = exports.Enmap.get(channel.id, "health.total");
     const newHealth = totalHealth * 2;
 
-    const levelUsers = exports.Enmap.get(message.channel.id, "current.users");
-    const levelPosts = exports.Enmap.get(message.channel.id, "current.posts");
+    const levelUsers = exports.Enmap.get(channel.id, "current.users");
+    const levelPosts = exports.Enmap.get(channel.id, "current.posts");
 
     const randomLove = levelUsers[Math.floor(Math.random() * levelUsers.length)];
-    const userDamage = getUserDamage(message, randomLove, prevLevel);
+    const userDamage = getUserDamage(channel, randomLove, prevLevel);
     love.give(randomLove, userDamage);
 
     exports.Enmap.set(
-        message.channel.id,
+        channel.id,
         {
             users: [],
             posts: 0,
@@ -110,20 +91,22 @@ function levelUp(client, message) {
         },
         "current"
     );
-    exports.Enmap.set(message.channel.id, newHealth, "health.total");
-    exports.Enmap.set(message.channel.id, newHealth, "health.current");
-    exports.Enmap.set(message.channel.id, getSuperEmojis(client, message), "emojis");
-    exports.Enmap.inc(message.channel.id, "level");
+    exports.Enmap.set(
+        channel.id,
+        messageUtils.getRandomEmojis(channel.guild, 3, false).map(e => e.identifier),
+        "emojis");
+    exports.Enmap.set(channel.id, newHealth, "health.total");
+    exports.Enmap.set(channel.id, newHealth, "health.current");
+    exports.Enmap.inc(channel.id, "level");
 
-    message.channel.send(`LEVEL ${prevLevel + 1} \`[${levelUsers.length} | ${levelPosts}]\`\n<@${randomLove}> wins the lottery and receives mandatory affection.`);
+    channel.send(`LEVEL ${prevLevel + 1} \`[${levelUsers.length} | ${levelPosts}]\`\n<@${randomLove}> wins the lottery and receives mandatory affection.`);
 }
 
 /**
  * Adjust values.
- * @param {Discord.Client} client
  * @param {Discord.Message} message
  * */
-function inc(client, message) {
+function inc(message) {
     const damage = 1;
     let mult = 1;
     for (const emoji of exports.Enmap.get(message.channel.id, "emojis")) { 
@@ -137,19 +120,23 @@ function inc(client, message) {
     const currentHealth = exports.Enmap.get(message.channel.id, "health.current");
     const damageDealt = Math.min(currentHealth, (damage * mult));
     const newHealth = currentHealth - damageDealt;
-    recordDamage(client, message, damageDealt);
+    recordDamage(message, damageDealt);
     love.inc(message.author.id, message.author.permLevel > 0);
 
     exports.Enmap.inc(message.channel.id, "current.posts");
     exports.Enmap.inc(message.channel.id, "overall.posts");
     exports.Enmap.set(message.channel.id, newHealth, "health.current");
     if (newHealth <= 0) { 
-        levelUp(client, message);
+        levelUp(message.channel);
     }
-    updateChannel(client, message);
+    updateChannel(message.channel);
 }
 
-function yeet(client, message) { 
+/**
+ * Adjust values.
+ * @param {Discord.Message} message
+ * */
+function yeet(message) { 
     // Yeet the member via role
     const roleID = exports.Enmap.get(message.channel.id, "role");
     message.member.roles.add(roleID).catch(console.error);
@@ -178,23 +165,22 @@ function yeet(client, message) {
 /**
  * Remove a emoji battle royale channel.
  * TODO: Fix the yeet length
- * @param {Discord.Client} client
- * @param {Discord.Message} message
+ * @param {Discord.TextChannel} channel
  * @param {Array} args
  * */
-function reset(client, message, args) {
+function reset(channel) {
     const obj = {
         users: [],
         posts: 0,
         damage: 0,
     };
-    exports.Enmap.set(message.channel.id, obj, "current");
-    exports.Enmap.set(message.channel.id, obj, "overall");
-    exports.Enmap.set(message.channel.id, {}, "participants");
-    exports.Enmap.set(message.channel.id, 1, "level");
-    exports.Enmap.set(message.channel.id, 2, "health.total");
-    exports.Enmap.set(message.channel.id, 2, "health.current");
-    exports.Enmap.set(message.channel.id, getSuperEmojis(client, message), "emojis");
+    exports.Enmap.set(channel.id, obj, "current");
+    exports.Enmap.set(channel.id, obj, "overall");
+    exports.Enmap.set(channel.id, {}, "participants");
+    exports.Enmap.set(channel.id, 1, "level");
+    exports.Enmap.set(channel.id, 2, "health.total");
+    exports.Enmap.set(channel.id, 2, "health.current");
+    exports.Enmap.set(channel.id, messageUtils.getRandomEmojis(channel.guild, 3, false).map(e => e.identifier), "emojis");
 }
 
 
@@ -230,8 +216,8 @@ exports.add = async (client, message, args) => {
         lastUpdate: 0,
     });
 
-    reset(client, message);
-    updateChannel(client, message);
+    reset(message.channel);
+    updateChannel(message.channel);
     return message.react(riz.Unicode.ThumbsUp);
 };
 
@@ -265,9 +251,9 @@ exports.check = async (client, message) => {
     }
 
     if (riz.Util.ContainsNonEmojis(message.content)) {
-        yeet(client, message);
-        reset(client, message);
+        yeet(message);
+        reset(message.channel);
     } else { 
-        inc(client, message);
+        inc(message);
     }
 };
