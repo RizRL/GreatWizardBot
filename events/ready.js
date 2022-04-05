@@ -1,11 +1,9 @@
-const logger = require("../modules/logger.js");
-const manager = require("../modules/discord-manager");
-
 const ebr = require("../modules/emojibattleroyale.js");
+const logger = require("../modules/logger.js");
 const love = require("../modules/love.js");
-const sequence = require("../modules/sequence.js");
-
+const manager = require("../modules/discord-manager");
 const riz = require("../modules/riz.js");
+const sequence = require("../modules/sequence.js");
 
 module.exports = async client => {
 

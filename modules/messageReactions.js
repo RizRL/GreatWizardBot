@@ -1,6 +1,6 @@
 const config = require("../config.js");
-const messageUtils = require("./messageUtils.js");
 const love = require("./love.js");
+const messageUtils = require("./messageUtils.js");
 
 module.exports = (client, msg) => {
     const [isExplosion, isNice] = [
@@ -10,7 +10,7 @@ module.exports = (client, msg) => {
     
     (async () => {
         const isSub = msg.author.permLevel >= client.container.levelCache[config.permNames.SUBSCRIBER];
-        
+
         // Always check for explosion
         if (isExplosion) {
             msg.react(...messageUtils.getEmojis(msg.guild, ["youWHAT"]))

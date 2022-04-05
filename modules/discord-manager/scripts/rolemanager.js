@@ -1,5 +1,6 @@
 ﻿// eslint-disable-next-line no-unused-vars
 const Discord = require("discord.js");
+
 const Enmap = require("enmap");
 const schedule = require("node-schedule");
 

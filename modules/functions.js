@@ -1,7 +1,8 @@
-const logger = require("./logger.js");
-const config = require("../config.js");
-const { settings } = require("./settings.js");
 const { promisify } = require("util");
+const { settings } = require("./settings.js");
+
+const config = require("../config.js");
+const logger = require("./logger.js");
 const readdir = promisify(require("fs").readdir);
 // Let's start by getting some useful functions that we'll use throughout
 // the bot, like logs and elevation features.

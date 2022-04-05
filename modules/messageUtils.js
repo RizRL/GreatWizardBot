@@ -1,10 +1,11 @@
 // eslint-disable-next-line no-unused-vars
 const { Client, Guild, GuildMember, Message, TextChannel, Util } = require("discord.js");
+
+const { pingCounter, pingDisable, pingResponses } = require("./settings.js");
+
 const config = require("../config.js");
 const logger = require("../modules/logger.js");
-
 const love = require("../modules/love.js");
-const { pingCounter, pingDisable, pingResponses } = require("./settings.js");
 
 const mentionRegex = /<(a)?:?((\w{2,32})|(@|#|&|!)*)?:?(\d{17,19})>/g;
 

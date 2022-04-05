@@ -1,8 +1,8 @@
 // eslint-disable-next-line no-unused-vars
 const Discord = require("discord.js");
 
-const sequence = require("../../modules/sequence.js");
 const messageUtils = require("../../modules/messageUtils.js");
+const sequence = require("../../modules/sequence.js");
 
 /**
  * @param {Discord.Client} client

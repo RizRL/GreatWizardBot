@@ -1,5 +1,7 @@
-const config = require("../../config.js");
 const { settings } = require("../../modules/settings.js");
+
+const config = require("../../config.js");
+
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
     const replying = settings.ensure(message.guild.id, config.defaultSettings).commandReply;
     await message.reply({

@@ -1,5 +1,7 @@
-const config = require("../../config.js");
 const { settings } = require("../../modules/settings.js");
+
+const config = require("../../config.js");
+
 exports.run = async (client, message, args, level) => {
     const friendly = config.permLevels.find(l => l.level === level).name;
     const replying = settings.ensure(message.guild.id, config.defaultSettings).commandReply;

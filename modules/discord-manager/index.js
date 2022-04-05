@@ -1,5 +1,4 @@
 ﻿const logger = require("../logger.js");
-
 const messageManager = require("./scripts/messagemanager.js");
 const roleManager = require("./scripts/rolemanager.js");
 

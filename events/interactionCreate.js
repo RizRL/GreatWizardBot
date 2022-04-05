@@ -1,6 +1,7 @@
-const logger = require("../modules/logger.js");
 const { getSettings, permlevel } = require("../modules/functions.js");
+
 const config = require("../config.js");
+const logger = require("../modules/logger.js");
 
 module.exports = async (client, interaction) => {
     // If it's not a command, stop.

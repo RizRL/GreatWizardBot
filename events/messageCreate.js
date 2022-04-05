@@ -1,12 +1,11 @@
-const logger = require("../modules/logger.js");
 const { getSettings, permlevel } = require("../modules/functions.js");
+
 const config = require("../config.js");
-
 const ebr = require("../modules/emojibattleroyale.js");
-const sequence = require("../modules/sequence.js");
-
-const messageUtils = require("../modules/messageUtils.js");
+const logger = require("../modules/logger.js");
 const messageReactions = require("../modules/messageReactions.js");
+const messageUtils = require("../modules/messageUtils.js");
+const sequence = require("../modules/sequence.js");
 
 // The MESSAGE event runs anytime a message is received
 // Note that due to the binding of client to every event, every event

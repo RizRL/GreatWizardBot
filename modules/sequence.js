@@ -4,7 +4,6 @@ const Discord = require("discord.js");
 const Enmap = require("enmap");
 const config = require("../config.js");
 const logger = require("./logger.js");
-
 const love = require("./love.js");
 const manager = require("./discord-manager");
 const riz = require("./riz.js");

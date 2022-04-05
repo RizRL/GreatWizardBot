@@ -1,5 +1,6 @@
 ﻿const fs = require("fs");
 const schedule = require("node-schedule");
+
 const Util = {};
 
 // helper obj to manage reading and writing the json
