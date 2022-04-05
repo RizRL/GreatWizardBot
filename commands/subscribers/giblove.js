@@ -1,5 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 const Discord = require("discord.js");
+
+const config = require("../../config.js");
 const love = require("../../modules/love.js");
 
 /**
@@ -9,9 +11,10 @@ const love = require("../../modules/love.js");
  * @param {Number} level
  */
 exports.run = async (client, message, [action, ...args], level) => {
-    love.inc(message.author.id, message.author.permLevel > 0);
+    const isSub = message.author.permLevel >= client.container.levelCache[config.permNames.SUBSCRIBER];
+    love.inc(message.author.id, isSub);
     const value = love.get(message.author.id);
-    message.channel.send(`Affection delivered. <3 [${value}]`);
+    message.channel.send(`Affection delivered. <3 \`[${value}]\``);
 };
 
 exports.conf = {

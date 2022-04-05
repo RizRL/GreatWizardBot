@@ -2,6 +2,7 @@
 const Discord = require("discord.js");
 
 const Enmap = require("enmap");
+const config = require("../config.js");
 const logger = require("./logger.js");
 
 const love = require("./love.js");
@@ -107,9 +108,10 @@ async function levelUp(channel) {
 
 /**
  * Adjust values.
+ * @param {Discord.Client} client
  * @param {Discord.Message} message
  * */
-async function inc(message) {
+async function inc(client, message) {
     const damage = 1;
     let mult = 1;
     for (const emoji of exports.Enmap.get(message.channel.id, "emojis")) { 
@@ -124,7 +126,9 @@ async function inc(message) {
     const damageDealt = Math.min(currentHealth, (damage * mult));
     const newHealth = currentHealth - damageDealt;
     recordDamage(message, damageDealt);
-    love.inc(message.author.id, message.author.permLevel > 0);
+
+    const isSub = message.author.permLevel >= client.container.levelCache[config.permNames.SUBSCRIBER];
+    love.inc(message.author.id, isSub);
 
     exports.Enmap.inc(message.channel.id, "current.posts");
     exports.Enmap.inc(message.channel.id, "overall.posts");
@@ -138,9 +142,10 @@ async function inc(message) {
 
 /**
  * Adjust values.
+ * @param {Discord.Client} client
  * @param {Discord.Message} message
  * */
-function yeet(message) { 
+function yeet(client, message) { 
     // Yeet the member via role
     const roleID = exports.Enmap.get(message.channel.id, "role");
     message.member.roles.add(roleID).catch(console.error);
@@ -155,7 +160,8 @@ function yeet(message) {
     const yeetedSeconds = 60 * yeetedMinutes;
     manager.RoleManager.TimedRoles.Set(message.guild.id, message.member.id, roleID, time + yeetedSeconds);
 
-    love.dec(message.author.id, message.author.permLevel > 0);
+    const isSub = message.author.permLevel >= client.container.levelCache[config.permNames.SUBSCRIBER];
+    love.dec(message.author.id, isSub);
 
     const str = `
 ***${riz.Games.GetYeetedString(message.author)} [${yeetedMinutes}m]***
@@ -256,9 +262,9 @@ exports.check = async (client, message) => {
     }
 
     if (riz.Util.ContainsNonEmojis(message.content)) {
-        yeet(message);
+        yeet(client, message);
         reset(message.channel);
     } else { 
-        inc(message);
+        inc(client, message);
     }
 };

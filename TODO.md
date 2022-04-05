@@ -9,7 +9,8 @@ Lists are roughly in order of preference.
 
 ## Eventually
 
-- Update Emoji Battle Royale to pick an Emoji that users must discover.
+- Add scheduled presence updating.
+- Add system to randomize presence.
 
 ## Bugs
 

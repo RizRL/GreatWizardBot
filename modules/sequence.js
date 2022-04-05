@@ -2,11 +2,11 @@
 const Discord = require("discord.js");
 
 const Enmap = require("enmap");
+const config = require("../config.js");
 const logger = require("./logger.js");
 
 const love = require("./love.js");
 const manager = require("./discord-manager");
-const messageUtils = require("./messageUtils.js");
 const riz = require("./riz.js");
 
 /**
@@ -33,9 +33,10 @@ function saveCount(message, type = "Current" || "Total") {
 
 /**
  * Increment the sequence
+ * @param {Discord.Client} client
  * @param {Discord.Message} message
  * */
-function increment(message) {
+function increment(client, message) {
     exports.Enmap.inc(message.channel.id, "current");
 
     saveContribution(message, "Current");
@@ -43,7 +44,8 @@ function increment(message) {
     saveCount(message, "Current");
     saveCount(message, "Total");
 
-    love.inc(message.author.id, message.author.permLevel > 0);
+    const isSub = message.author.permLevel >= client.container.levelCache[config.permNames.SUBSCRIBER];
+    love.inc(message.author.id, isSub);
 }
 
 /**
@@ -75,9 +77,10 @@ async function reset(message) {
 }
 
 /**
+ * @param {Discord.Client} client
  * @param {Discord.Message} message 
  */
-function yeet(message) {
+function yeet(client, message) {
     // Yeet the member via role
     const roleID = exports.Enmap.get(message.channel.id, "role");
     message.member.roles.add(roleID).catch(console.error);
@@ -92,7 +95,8 @@ function yeet(message) {
     const yeetedSeconds = 60 * yeetedMinutes;
     manager.RoleManager.TimedRoles.Set(message.guild.id, message.member.id, roleID, time + yeetedSeconds);
 
-    love.dec(message.author.id, message.author.permLevel > 0);
+    const isSub = message.author.permLevel >= client.container.levelCache[config.permNames.SUBSCRIBER];
+    love.dec(message.author.id, isSub);
 
     // Construct a message and send it.
     const record = exports.Enmap.get(message.channel.id, "record");
@@ -182,9 +186,9 @@ exports.check = async (client, message) => {
         return;
     }
     if (message.content == exports.Enmap.get(message.channel.id, "current")) {
-        increment(message);
+        increment(client, message);
     } else {
         reset(message);
-        yeet(message);
+        yeet(client, message);
     }
 };

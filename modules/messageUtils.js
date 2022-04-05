@@ -1,6 +1,8 @@
 // eslint-disable-next-line no-unused-vars
 const { Client, Guild, GuildMember, Message, TextChannel, Util } = require("discord.js");
+const config = require("../config.js");
 const logger = require("../modules/logger.js");
+
 const love = require("../modules/love.js");
 const { pingCounter, pingDisable, pingResponses } = require("./settings.js");
 
@@ -74,7 +76,9 @@ function getMentionString(member) {
 async function respondToPings(client, msg) {
     pingCounter.ensure(msg.author.id, 0);
     pingCounter.inc(msg.author.id);
-    love.inc(msg.author.id, msg.author.permLevel > 0);
+
+    const isSub = msg.author.permLevel >= client.container.levelCache[config.permNames.SUBSCRIBER];
+    love.inc(msg.author.id, isSub);
 
     // do something random
     const randomResponse = pingResponses.random();

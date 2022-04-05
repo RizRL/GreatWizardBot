@@ -26,7 +26,7 @@ module.exports = async (client, message) => {
     sequence.check(client, message);
 
     // We add some reactions to some messages in some cases
-    messageReactions(message);
+    messageReactions(client, message);
 
     // Grab the settings for this server from Enmap.
     // If there is no guild, get default conf (DMs)

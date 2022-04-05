@@ -1,18 +1,21 @@
+const config = require("../config.js");
 const messageUtils = require("./messageUtils.js");
 const love = require("./love.js");
 
-module.exports = (msg) => {
+module.exports = (client, msg) => {
     const [isExplosion, isNice] = [
         messageUtils.checkForWord(msg, "explosion") || messageUtils.checkForWord(msg, "explode"),
         msg.content.length === 69
     ];
     
     (async () => {
+        const isSub = msg.author.permLevel >= client.container.levelCache[config.permNames.SUBSCRIBER];
+        
         // Always check for explosion
         if (isExplosion) {
             msg.react(...messageUtils.getEmojis(msg.guild, ["youWHAT"]))
                 .then(r => {
-                    love.inc(msg.author.id, msg.author.permLevel > 0);
+                    love.inc(msg.author.id, isSub);
                 })
                 .catch(console.error);
         }
@@ -21,7 +24,7 @@ module.exports = (msg) => {
         if (isNice) {
             msg.react(...messageUtils.getEmojis(msg.guild, ["NICE"]))
                 .then(r => {
-                    love.inc(msg.author.id, msg.author.permLevel > 0);
+                    love.inc(msg.author.id, isSub);
                 })
                 .catch(console.error);
         }
@@ -30,7 +33,7 @@ module.exports = (msg) => {
         if (Math.floor(Math.random() * 69) + 1 === 69) {
             msg.react(msg.guild.emojis.cache.random())
                 .then(r => {
-                    love.inc(msg.author.id, msg.author.permLevel > 0);
+                    love.inc(msg.author.id, isSub);
                 })
                 .catch(console.error);
         }

@@ -2,6 +2,18 @@
 const { Intents, Message } = require("discord.js");
 const love = require("./modules/love.js");
 
+const permNames = {
+    USER: "User",
+    FAVORITE: "Favorite",
+    SUBSCRIBER: "Subscriber",
+    MODERATOR: "Moderator",
+    ADMINISTRATOR: "Administrator",
+    SERVER_OWNER: "Server Owner",
+    BOT_SUPPORT: "Bot Support",
+    BOT_ADMIN: "Bot Admin",
+    BOT_OWNER: "Bot Owner",
+};
+
 /**
  * Config referenced in index
  */
@@ -52,13 +64,15 @@ const config = {
 
     // PERMISSION LEVEL DEFINITIONS.
 
+    permNames: permNames,
+
     permLevels: [
         /**
          * This is the lowest permission level, this is for users without a role.
          */
         {
             level: 0,
-            name: "User", 
+            name: permNames.USER, 
             /**
              * Don't bother checking, just return true which allows them to execute any command their
              * level allows them to.
@@ -68,7 +82,7 @@ const config = {
 
         {
             level: 1,
-            name: "Favorite",
+            name: permNames.FAVORITE,
             /**
              * @param {Message} message 
              */
@@ -83,7 +97,7 @@ const config = {
 
         {
             level: 2,
-            name: "Subscriber",
+            name: permNames.SUBSCRIBER,
             /**
              * @param {Message} message 
              */
@@ -107,7 +121,7 @@ const config = {
             /**
              * This is the name of the role.
              */
-            name: "Moderator",
+            name: permNames.MODERATOR,
             /**
              * The following lines check the guild the message came from for the roles.
              * Then it checks if the member that authored the message has the role.
@@ -129,7 +143,7 @@ const config = {
 
         {
             level: 6,
-            name: "Administrator",
+            name: permNames.ADMINISTRATOR,
             /**
              * @param {Message} message 
              */
@@ -148,7 +162,7 @@ const config = {
          */
         {
             level: 8,
-            name: "Server Owner",
+            name: permNames.SERVER_OWNER,
             /**
              * Simple check, if the guild owner id matches the message author's ID, then it will return true.
              * Otherwise it will return false.
@@ -166,7 +180,7 @@ const config = {
          */
         {
             level: 10,
-            name: "Bot Support",
+            name: permNames.BOT_SUPPORT,
             /**
              * The check is by reading if an ID is part of this array. Yes, this means you need to
              * change this and reboot the bot to add a support user. Make it better yourself!
@@ -183,7 +197,7 @@ const config = {
          */
         {
             level: 11,
-            name: "Bot Admin",
+            name: permNames.BOT_ADMIN,
             /**
              * @param {Message} message 
              */
@@ -201,7 +215,7 @@ const config = {
          */
         {
             level: 12,
-            name: "Bot Owner", 
+            name: permNames.BOT_OWNER, 
             /**
              * Another simple check, compares the message author id to a list of owners found in the bot application.
              * @param {Message} message 
