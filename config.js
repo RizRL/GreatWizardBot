@@ -1,5 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 const { Intents, Message } = require("discord.js");
+const love = require("./modules/love.js");
 
 /**
  * Config referenced in index
@@ -67,11 +68,26 @@ const config = {
 
         {
             level: 1,
+            name: "Favorite",
+            /**
+             * @param {Message} message 
+             */
+            check: (message) => {
+                try {
+                    return love.compare(message.author.id);
+                } catch (e) {
+                    return false;
+                }
+            }
+        },
+
+        {
+            level: 2,
             name: "Subscriber",
             /**
              * @param {Message} message 
              */
-            check: (message) => { 
+            check: (message) => {
                 try {
                     const subRole = message.guild.roles.cache.find(r => r.name.toLowerCase() === message.settings.ttvSubRole.toLowerCase());
                     if (subRole && message.member.roles.cache.has(subRole.id)) {
@@ -87,7 +103,7 @@ const config = {
          * This is your permission level, the staff levels should always be above the rest of the roles.
          */
         {
-            level: 2,
+            level: 4,
             /**
              * This is the name of the role.
              */
@@ -112,7 +128,7 @@ const config = {
         },
 
         {
-            level: 3,
+            level: 6,
             name: "Administrator",
             /**
              * @param {Message} message 
@@ -131,7 +147,7 @@ const config = {
          * This is the server owner.
          */
         {
-            level: 4,
+            level: 8,
             name: "Server Owner",
             /**
              * Simple check, if the guild owner id matches the message author's ID, then it will return true.
@@ -149,7 +165,7 @@ const config = {
          * to any server they joins, in order to help troubleshoot the bot on behalf of owners.
          */
         {
-            level: 8,
+            level: 10,
             name: "Bot Support",
             /**
              * The check is by reading if an ID is part of this array. Yes, this means you need to
@@ -166,7 +182,7 @@ const config = {
          * Bot Admin has some limited access like rebooting the bot or reloading commands.
          */
         {
-            level: 9,
+            level: 11,
             name: "Bot Admin",
             /**
              * @param {Message} message 
@@ -184,7 +200,7 @@ const config = {
          * Updated to utilize the Teams type from the Application, pulls a list of "Owners" from it.
          */
         {
-            level: 10,
+            level: 12,
             name: "Bot Owner", 
             /**
              * Another simple check, compares the message author id to a list of owners found in the bot application.
